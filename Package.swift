@@ -7,11 +7,10 @@ let package = Package( name: "AdventOfCode2018",
                          .executable(name: "Day1", targets: [ "Day1" ])
                        ],
                        dependencies: [
-                        .package( url: "https://github.com/IBM-Swift/CommonCrypto.git", from: "1.0.0" ),
                         .package( url: "https://github.com/peterkovacs/FootlessParser.git", .branch( "inout-remainder" ) ),
                        ],
                        targets: [
-                         .target( name: "AdventOfCode", dependencies: [ "CommonCrypto", "FootlessParser" ] ),
+                         .target( name: "AdventOfCode", dependencies: [ "FootlessParser" ] ),
                          .target( name: "Day1", dependencies: [ "AdventOfCode" ] )
                        ]
-                       )
+                      )
