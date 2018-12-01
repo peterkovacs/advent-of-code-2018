@@ -12,7 +12,7 @@ print(changes.reduce(startingFrequency, +))
 print("PART 2")
 var frequenciesReached = Set<Int>()
 var frequency = 0
-print( infinite(changes).lazy.map({val in frequency += val; return frequency}).first { val in
+print( accumulate(cycle(changes), +).lazy.first { val in
   defer { frequenciesReached.insert(val) }
   return frequenciesReached.contains(val)
 } ?? 0 )
