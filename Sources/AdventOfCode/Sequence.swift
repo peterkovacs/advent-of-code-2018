@@ -25,3 +25,15 @@ public func accumulate<S: Sequence>( _ data: S, initial: S.Element = 0, _ op: @e
     return state.0
   }
 }
+
+extension Sequence where Element: Hashable {
+  func duplicates() -> [Self.Element]? {
+    let duplicates = self.reduce(into: [:]) { $0[$1, default:0] += 1 }.filter { $0.value > 1 }.keys
+    if duplicates.count > 0 {
+      return Array(duplicates)
+    } else {
+      return nil
+    }
+  }
+}
+
