@@ -23,24 +23,24 @@ extension Pixel {
 }
 
 extension CGContext {
-  static func covered(size: Int, fill input: [CGRect]) -> Int {
-    let context = CGContext(data: nil, width: size, height: size, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue )!
+  static func claims(size: Int, fill input: [CGRect]) -> CGContext {
+    let context = CGContext.square(size: size)
     context.setFillColor(CGColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.5))
     input.forEach { context.fill( $0 ) }
-    return (0..<size).reduce(0) { accum, y in (0..<size).reduce(accum) { accum, x in accum + (context[x: x, y: y]!.covered ? 1 : 0) }}
+    return context
+  }
+
+  var covered: Int {
+    return (0..<height).reduce(0) { accum, y in (0..<width).reduce(accum) { accum, x in accum + (self[x: x, y: y].covered ? 1 : 0) }}
   }
 }
 
 let input = parse()
 let size = 1000
-let covered = CGContext.covered(size: size, fill: input.map { $0.rect })
-print("PART 1", covered)
+let context = CGContext.claims(size: size, fill: input.map { $0.rect })
+print("PART 1", context.covered)
 
-let claim = input.enumerated().first { i in
-  var working = input
-  working.remove(at: i.offset)
-  // Removing the rect didn't result in any coverage change
-  // i doesn't intersect with any other rect in the working set
-  return CGContext.covered(size: size, fill: working.map { $0.rect }) == covered && working.allSatisfy { !$0.rect.intersects(i.element.rect) }
-}
-print("PART 2", claim as Any)
+let standalone = input.first { context[$0.rect].allSatisfy { $0.a == 128 } }
+print("PART 2", standalone as Any)
+
+// context.save(to: URL(fileURLWithPath: "image.png"))
