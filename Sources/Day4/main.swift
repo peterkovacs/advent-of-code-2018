@@ -36,13 +36,13 @@ extension Date {
 
 func parse() -> [Shift] {
   let date = { dateParser.date(from:$0)! } <^> ((char("[")) *> oneOrMore(not("]" as Character))) <* (char("]") <* whitespaces)
-  let begin = curry({ Log.begin($0, $1) }) <^> date <*> (string("Guard #") *> integer) <* string( " begins shift")
-  let asleep = { Log.asleep($0) } <^> date <* string("falls asleep")
-  let wakeup = { Log.wakeup($0) } <^> date <* string("wakes up")
+  let begin = curry(Log.begin) <^> date <*> (string("Guard #") *> integer) <* string( " begins shift")
+  let asleep = Log.asleep <^> date <* string("falls asleep")
+  let wakeup = Log.wakeup <^> date <* string("wakes up")
   let log = begin <|> asleep <|> wakeup
 
   let `guard`: Parser<Log, Int> = any() >>- { 
-    guard case .begin(_, let id) = $0 else { return fail( .Mismatch(Remainder([]), ".guard", String(describing: $0))) }
+    guard case .begin(_, let id) = $0 else { return fail( .Mismatch(Remainder([$0]), ".begin", String(describing: $0))) }
     return pure(id)
   }
 
@@ -55,7 +55,7 @@ func parse() -> [Shift] {
     }
   }
 
-  let shift = curry({ Shift(id: $0, asleep: $1) }) <^> `guard` <*> zeroOrMore(sleeping)
+  let shift = curry(Shift.init(id:asleep:)) <^> `guard` <*> zeroOrMore(sleeping)
   let logs = stdin.map { try! FootlessParser.parse( log, $0 ) }.sorted()
 
   return try! FootlessParser.parse(oneOrMore(shift), logs)
