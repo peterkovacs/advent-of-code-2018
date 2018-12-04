@@ -37,6 +37,12 @@ extension Sequence where Element: Hashable {
   }
 }
 
+extension Sequence where Element: Numeric {
+  public func sum() -> Self.Element {
+    return reduce(0, +)
+  }
+}
+
 public struct CombinationIterator<Element> : IteratorProtocol {
   private let coll: [Element]
   private var curr: [Element]
