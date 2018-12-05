@@ -27,9 +27,6 @@ print( "PART 1", part1.count )
 let alphabet = Array( "abcdefghijklmnopqrstuvwxyz".utf8 )
 var result = [Int](repeating: 0, count: alphabet.count)
 DispatchQueue.concurrentPerform( iterations: alphabet.count ) { i in
-  let letter = alphabet[i]
-  var working = input
-  working.removeAll { $0 == letter || $0 == (letter - 0x20) }
-  result[i] = working.react().count
+  result[i] = input.filter { $0 != alphabet[i] && $0 != (alphabet[i] - 0x20)  }.react().count
 }
 print( "PART 2", result.min() as Any )
