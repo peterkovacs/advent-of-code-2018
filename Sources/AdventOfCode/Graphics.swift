@@ -40,17 +40,34 @@ public extension CGContext {
   }
 
   public subscript(x x: CGFloat, y y: CGFloat) -> Pixel {
-    return self[x: Int(x.rounded()), y: Int(y.rounded())]
+    get {
+      return self[x: Int(x.rounded()), y: Int(y.rounded())]
+    }
+    set {
+       self[x: Int(x.rounded()), y: Int(y.rounded())] = newValue
+    }
+  }
+
+  public subscript(point: (CGFloat, CGFloat)) -> Pixel {
+    get {
+      return self[x: point.0, y: point.1]
+    }
+    set {
+       self[x: point.0, y: point.1] = newValue
+    }
+  }
+
+  public subscript(point: (Int, Int)) -> Pixel {
+    get {
+      return self[x: point.0, y: point.1]
+    }
+    set {
+      self[x: point.0, y: point.1] = newValue
+    }
   }
 
   public subscript(rect: CGRect) -> [Pixel] {
-    var result: [Pixel] = []
-    for y in stride(from: rect.minY, to: rect.maxY, by: 1) {
-      for x in stride(from: rect.minX, to: rect.maxX, by: 1) {
-        result.append(self[x: x, y: y])
-      }
-    }
-    return result
+    return iterate( rect.minX..<rect.maxX, and: rect.minY..<rect.maxY ).map { self[$0] }
   }
 
   @discardableResult func save(to destinationURL: URL) -> Bool { 
@@ -59,4 +76,30 @@ public extension CGContext {
     return CGImageDestinationFinalize(destination) 
   }
 
+}
+
+public struct PixelIterator: IteratorProtocol {
+  var x: Int = 0
+  var y: Int = 0
+  let context: CGContext
+
+  public mutating func next() -> Pixel? {
+    defer { 
+      x += 1 
+      if x >= context.width {
+        x = 0
+        y += 1
+      }
+    }
+
+    guard y < context.height else { return nil }
+
+    return context[x: x, y: y]
+  }
+}
+
+extension CGContext: Sequence {
+  public func makeIterator() -> PixelIterator {
+    return PixelIterator(x: 0, y: 0, context: self)
+  }
 }

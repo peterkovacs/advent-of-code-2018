@@ -159,7 +159,7 @@ extension Sequence {
   }
 }
 
-extension Sequence {
+public extension Sequence {
   public func permutations() -> PermutationIterator<Self> {
     return PermutationIterator(elements: self)
   }
@@ -206,4 +206,45 @@ public struct PermutationIterator<C: Sequence>: Sequence, IteratorProtocol {
 
     return nil
   }
+}
+
+public struct PairIterator<T: Numeric & Comparable>: Sequence, IteratorProtocol {
+  public typealias Element = (T, T)
+  var current: Element
+  let bounds: (Range<T>, Range<T>)
+
+  init( _ x: Range<T>, _ y: Range<T> ) {
+    self.bounds = (x, y)
+    self.current = (x.lowerBound, y.lowerBound)
+  }
+
+  public mutating func next() -> (T, T)? {
+    guard current.1 < bounds.1.upperBound else { return nil }
+
+    defer {
+      current.0 += 1
+      if current.0 == bounds.0.upperBound {
+        current.0 = bounds.0.lowerBound
+        current.1 += 1
+      }
+    }
+
+    return current
+  }
+}
+
+public func iterate<T: Numeric & Comparable>(_ x: Range<T>, and y: Range<T> ) -> PairIterator<T> {
+  return PairIterator(x, y)
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, and y: ClosedRange<T> ) -> PairIterator<T> where T.Stride: SignedInteger {
+  return PairIterator(Range(x), Range(y))
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: Range<T>, and y: ClosedRange<T> ) -> PairIterator<T> where T.Stride: SignedInteger {
+  return PairIterator(x, Range(y))
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, and y: Range<T> ) -> PairIterator<T> where T.Stride: SignedInteger {
+  return PairIterator(Range(x), y)
 }
