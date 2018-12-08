@@ -7,7 +7,7 @@ func sumOfMetadata() -> Parser<Int, Int> {
     let nChildren = try any().parse(&input)
     let nMetadata = try any().parse(&input)
 
-    return try count( nChildren, lazy(sumOfMetadata()) ).parse(&input).reduce(0, +) +
+    return try count( nChildren, sumOfMetadata() ).parse(&input).reduce(0, +) +
                count( nMetadata, any() ).parse(&input).reduce(0, +)
   }
 }
@@ -17,7 +17,7 @@ func valueOfNodes() -> Parser<Int, Int> {
     let nChildren = try any().parse(&input)
     let nMetadata = try any().parse(&input)
 
-    let children = try count( nChildren, lazy(valueOfNodes()) ).parse(&input)
+    let children = try count( nChildren, valueOfNodes() ).parse(&input)
     let metadata = try count( nMetadata, any() ).parse(&input)
 
     if nChildren == 0 {
