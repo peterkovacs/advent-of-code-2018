@@ -48,9 +48,11 @@ func best( at coords: (Int, Int), serial: Int ) -> (Int, Int, Int, Int) {
 }
 
 func best( serial: Int ) -> (Int,Int,Int,Int) {
-  return iterate( 1...300, and: 1...300 ).map { coord in 
-    return best(at: coord, serial: serial)
-  }.max { $0.3 < $1.3 }!
+  var results = [(Int, Int, Int, Int)?](repeating: nil, count: 300)
+  DispatchQueue.concurrentPerform( iterations: 300 ) { x in
+    results[x] = ( 0..<300 ).map { y in best(at: (x+1, y+1), serial: serial ) }.max { $0.3 < $1.3 }
+  }
+  return results.max { $0!.3 < $1!.3 }!!
 }
 
 assert( power(at: (122,79), serial: 57) == -5 )
