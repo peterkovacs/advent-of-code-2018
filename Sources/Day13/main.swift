@@ -98,21 +98,24 @@ struct Node: CustomStringConvertible {
 
 struct Grid: CustomStringConvertible {
   var grid: [[Node?]]
-  var count: Int
+  var ships: [(Int, Int)]
 
   init(grid: [[Node?]]) {
     self.grid = grid
-    self.count = iterate( 0..<grid[0].count, and: 0..<grid.count ).reduce(into: 0) { 
-      if grid[$1.1][$1.0]?.ship != nil { $0 += 1 }
+    self.ships = iterate( 0..<grid[0].count, and: 0..<grid.count ).reduce(into: []) { 
+      if grid[$1.1][$1.0]?.ship != nil {
+        $0.append($1)
+      }
     }
   }
   
   mutating func part1() -> (Int, Int)? {
     let original = grid
+    var newShips = [(Int, Int)]()
 
-    for (x, y) in iterate( 0..<grid[0].count, and: 0..<grid.count ) {
-      guard var node = original[y][x] else { continue }
-      guard let ship = node.ship  else { continue }
+    for (x, y) in ships {
+      guard var node = original[y][x] else { fatalError() }
+      guard let ship = node.ship  else { fatalError() }
       let (nx, ny) = ship.next(x: x, y: y)
       guard var next = grid[ny][nx] else { fatalError() }
 
@@ -120,45 +123,46 @@ struct Grid: CustomStringConvertible {
         return (nx, ny)
       }
 
+      newShips.append((nx, ny))
       ( node.ship, next.ship ) = (nil, ship.next(on: next.layout))
-      grid[y][x]   = node
-      grid[ny][nx] = next
+      grid[y][x]               = node
+      grid[ny][nx]             = next
     }
+
+    ships = newShips.sorted { $0.1 == $1.1 ? $0.0 < $1.0 : $0.1 < $1.1 }
 
     return nil
   }
 
   mutating func part2() -> Bool {
     var original = grid
+    var newShips: [(Int, Int)] = []
 
-    for (x, y) in iterate( 0..<grid[0].count, and: 0..<grid.count ) {
-      guard let node = original[y][x] else { continue }
-      guard let ship = node.ship  else { continue }
+    for (x, y) in ships {
+      guard var node = original[y][x] else { fatalError() }
+      // It's possible the ship has been removed from an earlier collision
+      guard let ship = node.ship      else { continue }
+
       let (nx, ny) = ship.next(x: x, y: y)
-      guard let next = grid[ny][nx] else { fatalError() }
+      guard var next = grid[ny][nx] else { fatalError() }
 
       if next.ship != nil {
-        original[y][x]?.ship       = nil
-        original[ny][nx]?.ship     = nil
-        grid[y][x]?.ship           = nil
-        grid[ny][nx]?.ship         = nil
-        count -= 2
+        ( node.ship, next.ship ) = ( nil, nil )
+        original[y][x]   = node
+        original[ny][nx] = next
+        grid[y][x]       = node
+        grid[ny][nx]     = next
       } else {
-        grid[y][x]?.ship   = nil
-        grid[ny][nx]?.ship = ship.next(on: next.layout)
-      }
-
-    }
-
-    return count < 2
-  }
-
-  var ships: [(Int, Int)] {
-    return iterate( 0..<grid[0].count, and: 0..<grid.count ).reduce(into: []) { 
-      if grid[$1.1][$1.0]?.ship != nil {
-        $0.append($1)
+        newShips.append((nx, ny))
+        ( node.ship, next.ship ) = (nil, ship.next(on: next.layout))
+        grid[y][x]               = node
+        grid[ny][nx]             = next
       }
     }
+
+    ships = newShips.sorted { $0.1 == $1.1 ? $0.0 < $1.0 : $0.1 < $1.1 }
+
+    return ships.count < 2
   }
 
   var description: String {
