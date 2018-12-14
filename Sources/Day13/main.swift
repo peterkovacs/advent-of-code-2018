@@ -111,9 +111,9 @@ struct Grid: CustomStringConvertible {
   
   mutating func part1() -> (Int, Int)? {
     let original = grid
-    var newShips = [(Int, Int)]()
+    var ships = [(Int, Int)]()
 
-    for (x, y) in ships {
+    for (x, y) in self.ships {
       guard var node = original[y][x] else { fatalError() }
       guard let ship = node.ship  else { fatalError() }
       let (nx, ny) = ship.next(x: x, y: y)
@@ -123,20 +123,20 @@ struct Grid: CustomStringConvertible {
         return (nx, ny)
       }
 
-      newShips.append((nx, ny))
+      ships.append((nx, ny))
       ( node.ship, next.ship ) = (nil, ship.next(on: next.layout))
       grid[y][x]               = node
       grid[ny][nx]             = next
     }
 
-    ships = newShips.sorted { $0.1 == $1.1 ? $0.0 < $1.0 : $0.1 < $1.1 }
+    self.ships = ships.sorted { $0.1 == $1.1 ? $0.0 < $1.0 : $0.1 < $1.1 }
 
     return nil
   }
 
   mutating func part2() -> Bool {
     var original = grid
-    var newShips: [(Int, Int)] = []
+    var result: [(Int, Int)] = []
 
     for (x, y) in ships {
       guard var node = original[y][x] else { fatalError() }
@@ -148,19 +148,28 @@ struct Grid: CustomStringConvertible {
 
       if next.ship != nil {
         ( node.ship, next.ship ) = ( nil, nil )
-        original[y][x]   = node
-        original[ny][nx] = next
-        grid[y][x]       = node
-        grid[ny][nx]     = next
+        grid[y][x]               = node
+        grid[ny][nx]             = next
+        original[y][x]           = node
+        original[ny][nx]         = next
+        // It's possible the ship we collided with has already moved, therefore
+        // it must be removed from the next iteration as well.
+        result.removeAll() { $0.0 == nx && $0.1 == ny }
       } else {
-        newShips.append((nx, ny))
+        result.append((nx, ny))
         ( node.ship, next.ship ) = (nil, ship.next(on: next.layout))
         grid[y][x]               = node
         grid[ny][nx]             = next
       }
     }
 
-    ships = newShips.sorted { $0.1 == $1.1 ? $0.0 < $1.0 : $0.1 < $1.1 }
+    ships = result.sorted { $0.1 == $1.1 ? $0.0 < $1.0 : $0.1 < $1.1 }
+
+    assert( ships.elementsEqual(iterate( 0..<grid[0].count, and: 0..<grid.count ).reduce(into: []) { 
+      if grid[$1.1][$1.0]?.ship != nil {
+        $0.append($1)
+      }
+    }, by: ==))
 
     return ships.count < 2
   }
