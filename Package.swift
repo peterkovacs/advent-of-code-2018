@@ -17,13 +17,13 @@ let package = Package( name: "AdventOfCode2018",
                          .executable(name: "Day11", targets: [ "Day11" ]),
                          .executable(name: "Day12", targets: [ "Day12" ]),
                          .executable(name: "Day13", targets: [ "Day13" ]),
+                         .executable(name: "Day14", targets: [ "Day14" ]),
                        ],
                        dependencies: [
                         .package(url: "https://github.com/peterkovacs/FootlessParser.git", .branch( "inout-remainder" )),
-                        .package(url: "https://github.com/dankogai/swift-complex.git", from: "4.0.0")
                        ],
                        targets: [
-                         .target(name: "AdventOfCode", dependencies: [ "FootlessParser", "Complex" ]),
+                         .target(name: "AdventOfCode", dependencies: [ "FootlessParser" ]),
                          .target(name: "Day1", dependencies: [ "AdventOfCode" ]),
                          .target(name: "Day2", dependencies: [ "AdventOfCode" ]),
                          .target(name: "Day3", dependencies: [ "AdventOfCode" ]),
@@ -37,5 +37,6 @@ let package = Package( name: "AdventOfCode2018",
                          .target(name: "Day11", dependencies: [ "AdventOfCode" ]),
                          .target(name: "Day12", dependencies: [ "AdventOfCode" ]),
                          .target(name: "Day13", dependencies: [ "AdventOfCode" ]),
+                         .target(name: "Day14", dependencies: [ "AdventOfCode" ]),
                        ]
                       )
