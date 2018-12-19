@@ -22,6 +22,12 @@ public extension CGRect {
 }
 
 public extension CGContext {
+  public static func create(size: CGSize) -> CGContext {
+    let context = CGContext(data: nil, width: Int(size.width), height: Int(size.height), bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue )!
+    context.translateBy(x: 0, y: size.height)
+    context.scaleBy(x: 1, y: -1)
+    return context
+  }
   public static func square(size: Int) -> CGContext {
     let context = CGContext(data: nil, width: size, height: size, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue )!
     context.translateBy(x: 0, y: CGFloat(size))
@@ -63,6 +69,15 @@ public extension CGContext {
     }
     set {
       self[x: point.0, y: point.1] = newValue
+    }
+  }
+
+  public subscript(point: Coordinate) -> Pixel {
+    get {
+      return self[x: point.x, y: point.y]
+    }
+    set {
+      self[x: point.x, y: point.y] = newValue
     }
   }
 

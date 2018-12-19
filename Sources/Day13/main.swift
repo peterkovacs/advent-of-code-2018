@@ -1,7 +1,6 @@
 import Foundation
 import AdventOfCode
 import FootlessParser
-import Complex
 
 enum Layout {
   case vertical

@@ -20,6 +20,8 @@ let package = Package( name: "AdventOfCode2018",
                          .executable(name: "Day14", targets: [ "Day14" ]),
                          .executable(name: "Day15", targets: [ "Day15" ]),
                          .executable(name: "Day16", targets: [ "Day16" ]),
+                         .executable(name: "Day18", targets: [ "Day18" ]),
+                         .executable(name: "Day19", targets: [ "Day19" ]),
                        ],
                        dependencies: [
                         .package(url: "https://github.com/peterkovacs/FootlessParser.git", .branch( "inout-remainder" )),
@@ -42,5 +44,7 @@ let package = Package( name: "AdventOfCode2018",
                          .target(name: "Day14", dependencies: [ "AdventOfCode" ]),
                          .target(name: "Day15", dependencies: [ "AdventOfCode" ]),
                          .target(name: "Day16", dependencies: [ "AdventOfCode" ]),
+                         .target(name: "Day18", dependencies: [ "AdventOfCode" ]),
+                         .target(name: "Day19", dependencies: [ "AdventOfCode" ]),
                        ]
                       )

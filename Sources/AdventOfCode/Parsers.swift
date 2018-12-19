@@ -15,3 +15,15 @@ extension Dictionary where Key: Equatable {
     }
   }
 }
+
+extension Dictionary where Key == String {
+  public var parser: Parser<Character, Value> {
+    return anyOf(keys) >>- { (token: String) -> Parser<Character, Value> in 
+      if let value = self[token] {
+        return pure(value)
+      } else {
+        throw ParseError.Mismatch(Remainder(token), String(describing:self), String(describing: token))
+      }
+    }
+  }
+}
