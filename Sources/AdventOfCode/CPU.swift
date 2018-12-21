@@ -9,122 +9,144 @@ public struct CPU: Equatable {
     self.registers = registers
   }
 
+  public static func addr(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] + registers[b]
+  }
   public func addr(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "ADDR", CPU.names[a], CPU.names[b], CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) + \(cpu.registers[b])")
-    cpu.registers[c] = cpu.registers[a] + cpu.registers[b]
+    CPU.addr(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
+  }
+
+  public static func addi(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] + b
   }
   public func addi(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "ADDI", CPU.names[a], b, CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) + \(b)")
-    cpu.registers[c] = cpu.registers[a] + b
+    CPU.addi(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
   }
 
+  public static func mulr(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] * registers[b]
+  }
   public func mulr(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "MULR", CPU.names[a], CPU.names[b], CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) * \(cpu.registers[b])")
-    cpu.registers[c] = cpu.registers[a] * cpu.registers[b]
+    CPU.mulr(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
+  }
+
+  public static func muli(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] * b
   }
   public func muli(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "MULI", CPU.names[a], b, CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) * \(b)")
-    cpu.registers[c] = cpu.registers[a] * b
+    CPU.muli(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
   }
 
+  public static func banr(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] & registers[b]
+  }
   public func banr(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "BANR", CPU.names[a], CPU.names[b], CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) & \(cpu.registers[b])")
-    cpu.registers[c] = cpu.registers[a] & cpu.registers[b]
+    CPU.banr(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
+  }
+  public static func bani(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] & b
   }
   public func bani(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "BANI", CPU.names[a], b, CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) & \(b)")
-    cpu.registers[c] = cpu.registers[a] & b
+    CPU.bani(registers: &cpu.registers, a: a, b: b, c: c)
+    return cpu
+  }
+  public static func borr(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] | registers[b]
+  }
+  public func borr(a: Int, b: Int, c: Int) -> CPU {
+    var cpu = self
+    CPU.borr(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
   }
 
-  public func borr(a: Int, b: Int, c: Int) -> CPU {
-    var cpu = self
-    //print(CPU.pc, "BORR", CPU.names[a], CPU.names[b], CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) | \(cpu.registers[b])")
-    cpu.registers[c] = cpu.registers[a] | cpu.registers[b]
-    return cpu
+  public static func bori(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] | b
   }
   public func bori(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "BORI", CPU.names[a], b, CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) | \(b)")
-    cpu.registers[c] = cpu.registers[a] | b
+    CPU.borr(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
   }
 
+  public static func setr(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a]
+  }
   public func setr(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "SETR", CPU.names[a], CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a])")
-    cpu.registers[c] = cpu.registers[a]
+    CPU.setr(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
+  }
+  public static func seti(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = a
   }
   public func seti(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "SETI", a, CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(a)")
-    cpu.registers[c] = a
+    CPU.seti(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
   }
 
+  public static func gtir(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = a > registers[b] ? 1 : 0
+  }
   public func gtir(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "GTIR", a, CPU.names[b], CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(a) > \(cpu.registers[b])")
-    cpu.registers[c] = a > cpu.registers[b] ? 1 : 0
+    CPU.gtir(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
+  }
+
+  public static func gtri(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] > b ? 1 : 0
   }
   public func gtri(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "GTRI", CPU.names[a], b, CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) > \(b)")
-    cpu.registers[c] = cpu.registers[a] > b ? 1 : 0
-    return cpu
-  }
-  public func gtrr(a: Int, b: Int, c: Int) -> CPU {
-    var cpu = self
-    //print(CPU.pc, "GTRR", CPU.names[a], CPU.names[b], CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) > \(cpu.registers[b])")
-    cpu.registers[c] = cpu.registers[a] > cpu.registers[b] ? 1 : 0
+    CPU.gtri(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
   }
 
+  public static func gtrr(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] > registers[b] ? 1 : 0
+  }
+  public func gtrr(a: Int, b: Int, c: Int) -> CPU {
+    var cpu = self
+    CPU.gtrr(registers: &cpu.registers, a: a, b: b, c: c)
+    return cpu
+  }
+
+  public static func eqir(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = a == registers[b] ? 1 : 0
+  }
   public func eqir(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "EQIR", a, CPU.names[b], CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(a) == \(cpu.registers[b])")
-    cpu.registers[c] = a == cpu.registers[b] ? 1 : 0
+    CPU.eqir(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
+  }
+
+  public static func eqri(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] == b ? 1 : 0
   }
   public func eqri(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "EQRI", CPU.names[a], b, CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) == \(b)")
-    cpu.registers[c] = cpu.registers[a] == b ? 1 : 0
+    CPU.eqri(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
+  }
+
+  public static func eqrr(registers: inout [Int], a: Int, b: Int, c: Int) {
+    registers[c] = registers[a] == registers[b] ? 1 : 0
   }
   public func eqrr(a: Int, b: Int, c: Int) -> CPU {
     var cpu = self
-    //print(CPU.pc, "EQRR", CPU.names[a], CPU.names[b], CPU.names[c], terminator:"")
-    //print("\t -- \(CPU.names[c]) = \(cpu.registers[a]) == \(cpu.registers[b])")
-    cpu.registers[c] = cpu.registers[a] == cpu.registers[b] ? 1 : 0
+    CPU.eqrr(registers: &cpu.registers, a: a, b: b, c: c)
     return cpu
   }
 

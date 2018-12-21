@@ -7,9 +7,9 @@ enum Halt: Error {
 }
 
 extension CPU {
-  typealias BoundInstruction = (CPU) -> CPU
+  typealias BoundInstruction = (inout [Int]) -> ()
   static var parser: Parser<Character, BoundInstruction> {
-    let instruction: Parser<Character, (CPU) -> (Int, Int, Int) -> CPU> = [
+    let instruction: Parser<Character, (inout [Int], Int, Int, Int) -> ()> = [
       "addr": CPU.addr, "addi": CPU.addi,
       "mulr": CPU.mulr, "muli": CPU.muli,
       "banr": CPU.banr, "bani": CPU.bani,
@@ -19,7 +19,7 @@ extension CPU {
       "eqir": CPU.eqir, "eqri": CPU.eqri, "eqrr": CPU.eqrr,
     ].parser
 
-    return curry({ inst, a, b, c in { (cpu: CPU) in inst(cpu)(a, b, c) } }) <^> 
+    return curry({ inst, a, b, c in { (registers: inout [Int]) in inst(&registers, a, b, c) } }) <^> 
       instruction <*> 
       (whitespaces *> unsignedInteger) <*>
       (whitespaces *> unsignedInteger) <*>
@@ -27,23 +27,19 @@ extension CPU {
   }
 
   static let ip = 4
-  func exec(code: [BoundInstruction]) throws -> CPU {
-    guard code.indices.contains(CPU.pc) else { throw Halt.done(self) }
+  func exec(code: [BoundInstruction]) -> CPU {
     var result = self
-    result.registers[CPU.ip] = CPU.pc
-    result = code[CPU.pc](result)
-    CPU.pc = result.registers[CPU.ip] + 1
-    return result
+    while true {
+      result.registers[CPU.ip] = CPU.pc
+      code[CPU.pc](&result.registers)
+      CPU.pc = result.registers[CPU.ip] + 1
+
+      guard code.indices.contains(CPU.pc) else { return result }
+    }
   }
 }
 
 // #ip 4
 let instructions = stdin.map { try! parse( CPU.parser, $0 ) }
-var cpu = CPU(registers: [Int](repeating: 0, count: 6))
-do {
-  while true {
-    cpu = try cpu.exec(code: instructions)
-  }
-} catch Halt.done(let e) {
-  print( "PART 1", e.registers )
-}
+let cpu = CPU(registers: [Int](repeating: 0, count: 6)).exec(code: instructions)
+print(cpu)

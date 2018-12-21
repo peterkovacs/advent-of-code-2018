@@ -2,7 +2,7 @@ import FootlessParser
 import AdventOfCode
 
 extension CPU {
-  static let ops = [ CPU.addi, CPU.addr, CPU.bani, CPU.banr, CPU.bori, CPU.borr, CPU.eqir, CPU.eqri, CPU.eqrr, CPU.gtir, CPU.gtri, CPU.gtrr, CPU.muli, CPU.mulr, CPU.seti, CPU.setr ]
+  static let ops: [(CPU) -> (Int, Int, Int) -> CPU] = [ CPU.addi, CPU.addr, CPU.bani, CPU.banr, CPU.bori, CPU.borr, CPU.eqir, CPU.eqri, CPU.eqrr, CPU.gtir, CPU.gtri, CPU.gtrr, CPU.muli, CPU.mulr, CPU.seti, CPU.setr ]
   static var codes = [Int:Int]()
 
   func exec(op: [Int]) -> CPU {
