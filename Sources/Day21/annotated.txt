@@ -1,0 +1,37 @@
+ 0: seti 123 . c      c = 123
+
+ 1: bani c 456 c      c = 123 & 456
+ 2: eqri c 72 c       if c != 72
+ 3: addr c ip ip       
+ 4: seti 0 . ip         goto 1
+ 5: seti 0 . c        c = 0
+ 
+ 6: bori c 65536 f    f = c | 0x10000
+ 7: seti 5234604 . c  c = 0x4fdfac
+
+ 8: bani f 255 d      d = f & 0xff
+ 9: addr c d c        c = d + c
+10: bani c 16777215 c c = c & 0xffffff
+11: muli c 65899 c    c = c * 65899
+12: bani c 16777215 c c = c & 0xffffff
+13: gtir 256 f d      if 256 > f
+14: addr d ip ip
+15: addi ip 1 ip          
+16: seti 27 . ip         goto 28
+17: seti 0 . d        d = 0
+18: addi d 1 b        b = d + 1
+19: muli b 256 b      b = 256 * b
+20: gtrr b f b        if b > f
+21: addr b ip ip
+22: addi ip 1 ip
+23: seti 25 . ip        goto 26
+24: addi d 1 d        d = d + 1
+25: seti 17 . ip      goto 18
+
+
+26: setr d . f       f = d
+27: seti 7 . ip      goto 8
+
+28: eqrr c A d       if c == INPUT
+29: addr d ip ip        HALT
+30: seti 5 . ip      goto 6
