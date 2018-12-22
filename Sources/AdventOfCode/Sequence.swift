@@ -233,18 +233,109 @@ public struct PairIterator<T: Numeric & Comparable>: Sequence, IteratorProtocol 
   }
 }
 
-public func iterate<T: Numeric & Comparable>(_ x: Range<T>, and y: Range<T> ) -> PairIterator<T> {
-  return PairIterator(x, y)
+public struct BiDiIterator<T: BidirectionalCollection, U: BidirectionalCollection>: Sequence, IteratorProtocol {
+  public typealias Element = (T.Element, U.Element)
+  var current: (T.Index, U.Index)
+  let x: T
+  let y: U
+
+  init( _ x: T, _ y: U ) {
+    self.current = ( x.startIndex, y.startIndex )
+    self.x = x
+    self.y = y
+  }
+
+  public mutating func next() -> Element? {
+    guard current.0 != x.endIndex, current.1 != y.endIndex else { return nil }
+    defer {
+      current.0 = x.index(after: current.0)
+      if current.0 == x.endIndex {
+        current.0 = x.startIndex
+        current.1 = y.index(after: current.1)
+      }
+    }
+
+    return (x[current.0], y[current.1])
+  }
 }
 
-public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, and y: ClosedRange<T> ) -> PairIterator<T> where T.Stride: SignedInteger {
-  return PairIterator(Range(x), Range(y))
+public func iterate<T: BidirectionalCollection, U: BidirectionalCollection>(_ x: T, and y: U ) -> BiDiIterator<T, U> {
+  return BiDiIterator(x, y)
 }
 
-public func iterate<T: Numeric & Comparable & Strideable>(_ x: Range<T>, and y: ClosedRange<T> ) -> PairIterator<T> where T.Stride: SignedInteger {
-  return PairIterator(x, Range(y))
+public func iterate<T: Numeric & Comparable>(_ x: Range<T>, and y: Range<T> ) -> TupleIterator2<T> {
+  return TupleIterator2(x, y)
 }
 
-public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, and y: Range<T> ) -> PairIterator<T> where T.Stride: SignedInteger {
-  return PairIterator(Range(x), y)
+// public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, and y: ClosedRange<T> ) -> TupleIterator2<T> where T.Stride: SignedInteger {
+//   return TupleIterator2(Range(x), Range(y))
+// }
+
+// public func iterate<T: Numeric & Comparable & Strideable>(_ x: Range<T>, and y: ClosedRange<T> ) -> TupleIterator2<T> where T.Stride: SignedInteger {
+//   return TupleIterator2(x, Range(y))
+// }
+
+// public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, and y: Range<T> ) -> TupleIterator2<T> where T.Stride: SignedInteger {
+//   return TupleIterator2(Range(x), y)
+// }
+
+public struct TupleIterator3<T: Numeric & Comparable>: Sequence, IteratorProtocol {
+  public typealias Element = (T, T, T)
+  var current: Element
+  let bounds: (Range<T>, Range<T>, Range<T>)
+
+  init( _ x: Range<T>, _ y: Range<T>, _ z: Range<T> ) {
+    self.bounds = (x, y, z)
+    self.current = (x.lowerBound, y.lowerBound, z.lowerBound)
+  }
+
+  public mutating func next() -> (T, T, T)? {
+    guard current.2 < bounds.2.upperBound else { return nil }
+
+    defer {
+      current.0 += 1
+      if current.0 == bounds.0.upperBound {
+        current.0 = bounds.0.lowerBound
+        current.1 += 1
+      }
+      if current.1 == bounds.1.upperBound {
+        current.1 = bounds.1.lowerBound
+        current.2 += 1
+      }
+    }
+
+    return current
+  }
+}
+
+public func iterate<T: Numeric & Comparable>(_ x: Range<T>, _ y: Range<T>, and z: Range<T> ) -> TupleIterator3<T> {
+  return TupleIterator3(x, y, z)
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, _ y: ClosedRange<T>, and z: ClosedRange<T> ) -> TupleIterator3<T> where T.Stride: SignedInteger {
+  return TupleIterator3(Range(x), Range(y), Range(z))
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, _ y: ClosedRange<T>, and z: Range<T> ) -> TupleIterator3<T> where T.Stride: SignedInteger {
+  return TupleIterator3(Range(x), Range(y), z)
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, _ y: Range<T>, and z: ClosedRange<T> ) -> TupleIterator3<T> where T.Stride: SignedInteger {
+  return TupleIterator3(Range(x), y, Range(z))
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: Range<T>, _ y: ClosedRange<T>, and z: ClosedRange<T> ) -> TupleIterator3<T> where T.Stride: SignedInteger {
+  return TupleIterator3(x, Range(y), Range(z))
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: Range<T>, _ y: Range<T>, and z: ClosedRange<T> ) -> TupleIterator3<T> where T.Stride: SignedInteger {
+  return TupleIterator3(x, y, Range(z))
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: Range<T>, _ y: ClosedRange<T>, and z: Range<T> ) -> TupleIterator3<T> where T.Stride: SignedInteger {
+  return TupleIterator3(x, Range(y), z)
+}
+
+public func iterate<T: Numeric & Comparable & Strideable>(_ x: ClosedRange<T>, y: Range<T>, and z: Range<T> ) -> TupleIterator3<T> where T.Stride: SignedInteger {
+  return TupleIterator3(Range(x), y, z)
 }
