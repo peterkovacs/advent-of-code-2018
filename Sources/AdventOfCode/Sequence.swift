@@ -43,6 +43,14 @@ extension Sequence where Element: Numeric {
   }
 }
 
+public extension Array {
+  public func appending(_ element: Element) -> Array<Element> {
+    var result = self
+    result.append(element)
+    return result
+  }
+}
+
 public struct CombinationIterator<Element> : IteratorProtocol {
   private let coll: [Element]
   private var curr: [Element]
@@ -208,7 +216,7 @@ public struct PermutationIterator<C: Sequence>: Sequence, IteratorProtocol {
   }
 }
 
-public struct PairIterator<T: Numeric & Comparable>: Sequence, IteratorProtocol {
+public struct TupleIterator2<T: Numeric & Comparable>: Sequence, IteratorProtocol {
   public typealias Element = (T, T)
   var current: Element
   let bounds: (Range<T>, Range<T>)
