@@ -82,7 +82,7 @@ public extension CGContext {
   }
 
   public subscript(rect: CGRect) -> [Pixel] {
-    return iterate( rect.minX..<rect.maxX, and: rect.minY..<rect.maxY ).map { self[$0] }
+    return iterate( Int(rect.minX)..<Int(rect.maxX), and: Int(rect.minY)..<Int(rect.maxY) ).map { self[$0] }
   }
 
   @discardableResult func save(to destinationURL: URL) -> Bool { 

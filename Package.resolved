@@ -2,21 +2,21 @@
   "object": {
     "pins": [
       {
-        "package": "CZ3",
-        "repositoryURL": "/Users/peter/Developer/CZ3",
-        "state": {
-          "branch": null,
-          "revision": "31bff90a429223bf9a8f79bd06a792b71614f775",
-          "version": "1.0.0"
-        }
-      },
-      {
         "package": "FootlessParser",
         "repositoryURL": "https://github.com/peterkovacs/FootlessParser.git",
         "state": {
           "branch": "inout-remainder",
           "revision": "1997256ca6db85760feb3a3811826ba7b4d52c42",
           "version": null
+        }
+      },
+      {
+        "package": "Tagged",
+        "repositoryURL": "https://github.com/pointfreeco/swift-tagged.git",
+        "state": {
+          "branch": null,
+          "revision": "d53900894206f9453a837b566f2805c0f9c86967",
+          "version": "0.2.0"
         }
       }
     ]
